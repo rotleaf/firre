@@ -148,10 +148,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
       - name: Install Rust target
         run: rustup target add aarch64-linux-android
 
-      - name: Set up Android NDK
+      - name: Set up Android SDK
         uses: android-actions/setup-android@v3
 
       - name: Install cargo-ndk
