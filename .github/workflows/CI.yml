@@ -18,6 +18,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
+
       - name: Build wheels
         uses: PyO3/maturin-action@v1
         with:
@@ -25,33 +26,35 @@ jobs:
           manylinux: auto
           sccache: ${{ !startsWith(github.ref, 'refs/tags/') }}
           args: --release --out dist --interpreter 3.10 3.11 3.12 3.13
-      - name: Upload wheels
-        uses: actions/upload-artifact@v4
+
+      - uses: actions/upload-artifact@v4
         with:
           name: wheels-linux-x86_64
-          path: dist
+          path: dist/*
 
   linux-aarch64:
     runs-on: ubuntu-24.04-arm
     steps:
       - uses: actions/checkout@v4
+
       - name: Build wheels
         uses: PyO3/maturin-action@v1
         with:
-          # native arm64 build, no cross target
-          manylinux: off
+          target: aarch64
+          manylinux: auto
           sccache: ${{ !startsWith(github.ref, 'refs/tags/') }}
           args: --release --out dist --interpreter 3.10 3.11 3.12 3.13
-      - name: Upload wheels
-        uses: actions/upload-artifact@v4
+
+      - uses: actions/upload-artifact@v4
         with:
           name: wheels-linux-aarch64
-          path: dist
+          path: dist/*
 
   musllinux-x86_64:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
+
       - name: Build wheels
         uses: PyO3/maturin-action@v1
         with:
@@ -59,11 +62,11 @@ jobs:
           manylinux: musllinux_1_2
           sccache: ${{ !startsWith(github.ref, 'refs/tags/') }}
           args: --release --out dist --interpreter 3.10 3.11 3.12 3.13
-      - name: Upload wheels
-        uses: actions/upload-artifact@v4
+
+      - uses: actions/upload-artifact@v4
         with:
           name: wheels-musllinux-x86_64
-          path: dist
+          path: dist/*
 
   windows:
     runs-on: ${{ matrix.platform.runner }}
@@ -81,21 +84,23 @@ jobs:
             python_arch: arm64
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with:
           python-version: "3.13"
           architecture: ${{ matrix.platform.python_arch }}
+
       - name: Build wheels
         uses: PyO3/maturin-action@v1
         with:
           target: ${{ matrix.platform.target }}
           sccache: ${{ !startsWith(github.ref, 'refs/tags/') }}
           args: --release --out dist --interpreter 3.13
-      - name: Upload wheels
-        uses: actions/upload-artifact@v4
+
+      - uses: actions/upload-artifact@v4
         with:
           name: wheels-windows-${{ matrix.platform.target }}
-          path: dist
+          path: dist/*
 
   macos:
     runs-on: ${{ matrix.platform.runner }}
@@ -108,38 +113,103 @@ jobs:
             target: aarch64
     steps:
       - uses: actions/checkout@v4
+
       - name: Build wheels
         uses: PyO3/maturin-action@v1
         with:
           target: ${{ matrix.platform.target }}
           sccache: ${{ !startsWith(github.ref, 'refs/tags/') }}
           args: --release --out dist --interpreter 3.10 3.11 3.12 3.13
-      - name: Upload wheels
-        uses: actions/upload-artifact@v4
+
+      - uses: actions/upload-artifact@v4
         with:
           name: wheels-macos-${{ matrix.platform.target }}
-          path: dist
+          path: dist/*
 
   sdist:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - name: Build sdist
         uses: PyO3/maturin-action@v1
         with:
           command: sdist
           args: --out dist
-      - name: Upload sdist
-        uses: actions/upload-artifact@v4
+
+      - uses: actions/upload-artifact@v4
         with:
           name: wheels-sdist
-          path: dist
+          path: dist/*
 
-  release:
-    name: Release
+  android-termux:
+    runs-on: ubuntu-22.04
+    if: startsWith(github.ref, 'refs/tags/')
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust target
+        run: rustup target add aarch64-linux-android
+
+      - name: Set up Android NDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install cargo-ndk
+        run: cargo install cargo-ndk
+
+      - name: Build Android/Termux binary
+        run: |
+          mkdir -p android-dist
+          cargo ndk -t arm64-v8a build --release --bin firre
+          cp target/aarch64-linux-android/release/firre android-dist/firre-android-aarch64
+          tar -C android-dist -czf android-dist/firre-android-aarch64.tar.gz firre-android-aarch64
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: android-termux
+          path: android-dist/*
+
+  release-github:
+    name: Upload all assets to GitHub Release
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/')
-    needs: [linux-x86_64, linux-aarch64, musllinux-x86_64, windows, macos, sdist]
+    needs:
+      - linux-x86_64
+      - linux-aarch64
+      - musllinux-x86_64
+      - windows
+      - macos
+      - sdist
+      - android-termux
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: release-dist
+          merge-multiple: true
+
+      - name: Show files
+        run: ls -lah release-dist
+
+      - name: Upload assets to GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            release-dist/*
+          generate_release_notes: true
+
+  release-pypi:
+    name: Publish PyPI-valid packages
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    needs:
+      - linux-x86_64
+      - linux-aarch64
+      - musllinux-x86_64
+      - windows
+      - macos
+      - sdist
     permissions:
       contents: read
       id-token: write
@@ -148,6 +218,30 @@ jobs:
         with:
           path: dist
           merge-multiple: true
+
+      - name: Remove non-PyPI artifacts
+        shell: bash
+        run: |
+          shopt -s nullglob
+          rm -f dist/*.tar.gz || true
+          for f in dist/*; do
+            base="$(basename "$f")"
+            case "$base" in
+              *.whl|*.tar.gz) ;;
+              *) rm -f "$f" ;;
+            esac
+          done
+
+          for f in dist/*.whl; do
+            base="$(basename "$f")"
+            if [[ "$base" == *-linux_* ]] && [[ "$base" != *manylinux* ]] && [[ "$base" != *musllinux* ]]; then
+              echo "Removing non-PyPI wheel: $base"
+              rm -f "$f"
+            fi
+          done
+
+          ls -lah dist
+
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
