@@ -1,5 +1,5 @@
 use clap::Parser;
-use firre::{firebase::auth::requests::core_refresh_token, utils::Ret};
+use firre::{firebase::auth::requests::*, utils::Ret};
 
 use crate::args::{AuthCommand, Cli, Cmd};
 
@@ -12,6 +12,12 @@ fn main() -> Ret<()> {
         Cmd::Auth { command } => match command {
             AuthCommand::RefreshToken(args) => {
                 core_refresh_token(&cli.api_key, &args.refresh_token, None)
+            }
+            AuthCommand::EmailPassSignIn(args) => {
+                core_email_pwd_sign_in(&cli.api_key, &args.email, &args.password, None)
+            }
+            AuthCommand::EmailPassSignUp(args) => {
+                core_email_pwd_sign_up(&cli.api_key, &args.email, &args.password, None)
             }
         },
     };

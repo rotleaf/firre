@@ -2,6 +2,104 @@ use std::collections::HashMap;
 
 use crate::firebase::firebase_error;
 
+pub fn core_email_pwd_sign_up(
+    api_key: &str,
+    email: &str,
+    password: &str,
+    headers: Option<HashMap<String, String>>,
+) -> Result<String, String> {
+    let url = format!(
+        "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key={}",
+        api_key
+    );
+
+    let client = reqwest::blocking::Client::new();
+
+    let body = serde_json::json!({
+        "email": email,
+        "password": password,
+        "returnSecureToken": true
+    });
+
+    let mut builder = client
+        .post(&url)
+        .header("Content-Type", "application/json")
+        .body(body.to_string());
+
+    if let Some(headx) = headers {
+        for (k, v) in &headx {
+            builder = builder.header(k.as_str(), v.as_str());
+        }
+    }
+
+    let response = builder
+        .send()
+        .map_err(|e| format!("Request failed: {}", e))?;
+
+    let status = response.status();
+    let text = response
+        .text()
+        .map_err(|e| format!("Failed to read response: {}", e))?;
+
+    if !status.is_success() {
+        return Err(format!("HTTP {}: {}", status, text));
+    }
+
+    let json: serde_json::Value =
+        serde_json::from_str(&text).map_err(|e| format!("Failed to parse response: {}", e))?;
+    firebase_error(&json)?;
+
+    Ok(text)
+}
+
+pub fn core_email_pwd_sign_in(
+    api_key: &str,
+    email: &str,
+    password: &str,
+    headers: Option<HashMap<String, String>>,
+) -> Result<String, String> {
+    let url = format!(
+        "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key={}",
+        api_key
+    );
+
+    let client = reqwest::blocking::Client::new();
+
+    let body = serde_json::json!({
+        "email": email,
+        "password": password,
+        "returnSecureToken": true
+    });
+
+    let mut builder = client
+        .post(&url)
+        .header("Content-Type", "application/json")
+        .body(body.to_string());
+
+    if let Some(headx) = headers {
+        for (k, v) in &headx {
+            builder = builder.header(k.as_str(), v.as_str());
+        }
+    }
+
+    let response = builder.send().map_err(|e| format!("Request failed: {e}"))?;
+
+    let status = response.status();
+    let text = response
+        .text()
+        .map_err(|e| format!("Failed to read response: {}", e))?;
+
+    if !status.is_success() {
+        return Err(format!("HTTP {}: {}", status, text));
+    }
+
+    let json: serde_json::Value =
+        serde_json::from_str(&text).map_err(|e| format!("Failed to parse response: {}", e))?;
+    firebase_error(&json)?;
+
+    Ok(text)
+}
+
 pub fn core_refresh_token(
     api_key: &str,
     refresh_token: &str,

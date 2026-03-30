@@ -20,6 +20,24 @@ pub enum Cmd {
 #[derive(Subcommand)]
 pub enum AuthCommand {
     RefreshToken(RefreshTokenArgs),
+    EmailPassSignIn(EmailPassSignInArgs),
+    EmailPassSignUp(EmailPassSignUpArgs),
+}
+
+#[derive(Args)]
+pub struct EmailPassSignUpArgs {
+    #[arg(help = "Email Address")]
+    pub email: String,
+    #[arg(help = "Password")]
+    pub password: String,
+}
+
+#[derive(Args)]
+pub struct EmailPassSignInArgs {
+    #[arg(help = "Email Address")]
+    pub email: String,
+    #[arg(help = "Password")]
+    pub password: String,
 }
 
 #[derive(Args)]
