@@ -8,7 +8,9 @@ Built with Rust and PyO3 — fast, typed, and works as both a pip package and a 
 
 ```bash
 pip install firre
+```
 Python Usage
+```
 import firre
 
 fire = firre.Firebase("YOUR_API_KEY")
@@ -30,7 +32,8 @@ r = fire.auth.signUp("newuser@example.com", "password")
 print(r.idToken)
 print(r.userId)
 Response Fields
-signIn / signUp returns AuthResponse:
+```
+### signIn / signUp returns AuthResponse:
 | Field | Description |
 |---|---|
 | idToken | Firebase ID token |
