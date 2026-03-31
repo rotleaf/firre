@@ -193,37 +193,6 @@ jobs:
           name: binary-linux-aarch64
           path: dist/*
 
-  binary-macos:
-    name: Build macOS firebase binary
-    runs-on: ${{ matrix.runner }}
-    strategy:
-      matrix:
-        include:
-          - runner: macos-15-intel
-            suffix: macos-x86_64
-          - runner: macos-latest
-            suffix: macos-aarch64
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: dtolnay/rust-toolchain@stable
-
-      - name: Build firebase CLI
-        run: cargo build --release --bin firebase
-
-      - name: Package firebase CLI
-        shell: bash
-        run: |
-          mkdir -p dist
-          cp target/release/firebase firebase
-          chmod +x firebase
-          tar -czf dist/firebase-${{ matrix.suffix }}.tar.gz firebase
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: binary-${{ matrix.suffix }}
-          path: dist/*
-
   binary-windows:
     name: Build Windows firebase binary
     runs-on: windows-latest
@@ -259,7 +228,6 @@ jobs:
       - sdist
       - binary-linux-x86_64
       - binary-linux-aarch64
-      - binary-macos
       - binary-windows
     permissions:
       contents: write
