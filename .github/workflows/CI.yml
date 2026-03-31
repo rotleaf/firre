@@ -12,7 +12,7 @@ permissions:
 
 jobs:
   linux-x86_64:
-    runs-on: self-hosted
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
 
@@ -30,7 +30,7 @@ jobs:
           path: dist/*
 
   linux-aarch64:
-    runs-on: self-hosted
+    runs-on: ubuntu-24.04-arm
     steps:
       - uses: actions/checkout@v4
 
@@ -48,7 +48,7 @@ jobs:
           path: dist/*
 
   musllinux-x86_64:
-    runs-on: self-hosted
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
 
@@ -65,8 +65,66 @@ jobs:
           name: dist-musllinux-x86_64
           path: dist/*
 
+  windows:
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      matrix:
+        include:
+          - runner: windows-latest
+            target: x64
+            python_arch: x64
+          - runner: windows-latest
+            target: x86
+            python_arch: x86
+          - runner: windows-11-arm
+            target: aarch64
+            python_arch: arm64
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          architecture: ${{ matrix.python_arch }}
+
+      - name: Build Windows wheels
+        uses: PyO3/maturin-action@v1
+        with:
+          target: ${{ matrix.target }}
+          sccache: ${{ !startsWith(github.ref, 'refs/tags/') }}
+          args: --release --out dist --interpreter 3.13
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist-windows-${{ matrix.target }}
+          path: dist/*
+
+  macos:
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      matrix:
+        include:
+          - runner: macos-15-intel
+            target: x86_64
+          - runner: macos-latest
+            target: aarch64
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build macOS wheels
+        uses: PyO3/maturin-action@v1
+        with:
+          target: ${{ matrix.target }}
+          sccache: ${{ !startsWith(github.ref, 'refs/tags/') }}
+          args: --release --out dist --interpreter 3.10 3.11 3.12 3.13
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist-macos-${{ matrix.target }}
+          path: dist/*
+
   sdist:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
@@ -80,7 +138,7 @@ jobs:
         with:
           name: dist-sdist
           path: dist/*
-  
+
   android-aarch64:
     runs-on: self-hosted
     steps:
@@ -130,12 +188,14 @@ jobs:
 
   release-github:
     name: Upload everything to GitHub Releases
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/')
     needs:
       - linux-x86_64
       - linux-aarch64
       - musllinux-x86_64
+      - windows
+      - macos
       - sdist
       - android-aarch64
     permissions:
@@ -157,12 +217,14 @@ jobs:
 
   release-pypi:
     name: Publish PyPI dists only
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/')
     needs:
       - linux-x86_64
       - linux-aarch64
       - musllinux-x86_64
+      - windows
+      - macos
       - sdist
     permissions:
       contents: read
