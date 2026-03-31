@@ -145,6 +145,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
       - uses: actions/setup-python@v5
         with:
           python-version: "3.13"
@@ -154,8 +159,9 @@ jobs:
 
       - name: Build Android wheel
         env:
+          ANDROID_API_LEVEL: "24"
           CIBW_PLATFORM: android
-          CIBW_BUILD: cp313-android_aarch64
+          CIBW_BUILD: cp313-android_arm64_v8a
           CIBW_BUILD_FRONTEND: build
           CIBW_BUILD_VERBOSITY: 1
         run: python -m cibuildwheel --output-dir android-wheelhouse
@@ -205,6 +211,7 @@ jobs:
       - windows
       - macos
       - sdist
+      - android-wheel
     permissions:
       contents: read
       id-token: write
@@ -219,10 +226,6 @@ jobs:
         run: |
           shopt -s nullglob
 
-          # remove android wheels from PyPI upload set
-          rm -f dist/*android*.whl || true
-
-          # remove anything that isn't a wheel or sdist
           for f in dist/*; do
             base="$(basename "$f")"
             case "$base" in
@@ -231,7 +234,6 @@ jobs:
             esac
           done
 
-          # remove raw linux wheels if any slip through
           for f in dist/*.whl; do
             base="$(basename "$f")"
             if [[ "$base" == *-linux_* ]] && [[ "$base" != *manylinux* ]] && [[ "$base" != *musllinux* ]]; then
