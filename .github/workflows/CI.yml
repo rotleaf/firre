@@ -138,6 +138,39 @@ jobs:
         with:
           name: dist-sdist
           path: dist/*
+  
+  android-aarch64:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Android NDK
+        uses: nttld/setup-ndk@v1
+        with:
+          ndk-version: r27c
+
+      - name: Install Rust Android target
+        run: rustup target add aarch64-linux-android
+
+      - name: Install maturin
+        run: pip install maturin
+
+      - name: Set Android env
+        run: |
+          echo "ANDROID_API_LEVEL=24" >> $GITHUB_ENV
+          echo "CARGO_TARGET_AARCH64_LINUX_ANDROID_LINKER=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android24-clang" >> $GITHUB_ENV
+
+      - name: Build Android wheel
+        run: |
+          maturin build --release \
+            --target aarch64-linux-android \
+            --out dist \
+            -i python3.10 python3.11 python3.12 python3.13
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist-android-aarch64
+          path: dist/*
 
   release-github:
     name: Upload everything to GitHub Releases
@@ -150,6 +183,7 @@ jobs:
       - windows
       - macos
       - sdist
+      - android-aarch64
     permissions:
       contents: write
     steps:
