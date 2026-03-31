@@ -141,19 +141,12 @@ jobs:
   
   android-aarch64:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python:
-          - { version: "3.10", tag: "cp310" }
-          - { version: "3.11", tag: "cp311" }
-          - { version: "3.12", tag: "cp312" }
-          - { version: "3.13", tag: "cp313" }
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-python@v5
         with:
-          python-version: ${{ matrix.python.version }}
+          python-version: "3.10"
 
       - name: Install maturin
         run: pip install maturin
@@ -168,22 +161,20 @@ jobs:
           ndk-version: r25b
           add-to-path: true
 
-      - name: Build Android wheel
+      - name: Build Android abi3 wheel
         run: |
           export NDK=${{ steps.ndk.outputs.ndk-path }}/toolchains/llvm/prebuilt/linux-x86_64/bin
           export CARGO_TARGET_AARCH64_LINUX_ANDROID_LINKER=$NDK/aarch64-linux-android24-clang
           export CC=$NDK/aarch64-linux-android24-clang
           export AR=$NDK/llvm-ar
           export ANDROID_API_LEVEL=24
-          export PYO3_CROSS=1
-          export PYO3_CROSS_PYTHON_VERSION=${{ matrix.python.version }}
-          export PYO3_CROSS_LIB_DIR=${{ steps.ndk.outputs.ndk-path }}/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/aarch64-linux-android/24
           export RUSTFLAGS="-C link-arg=-Wl,-rpath,/data/data/com.termux/files/usr/lib -C link-arg=-Wl,--no-as-needed"
 
           maturin build --release \
             --target aarch64-linux-android \
             --out dist \
-            -i python${{ matrix.python.version }}
+            --interpreter python3.10 \
+            --abi3-python-version 3.10
 
           for f in dist/*.whl; do
             newname=$(echo "$f" | sed 's/android_[0-9]*_arm64_v8a/linux_aarch64/')
@@ -192,7 +183,7 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: dist-android-aarch64-${{ matrix.python.tag }}
+          name: dist-android-aarch64
           path: dist/*
 
   release-github:
