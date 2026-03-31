@@ -12,6 +12,7 @@ permissions:
 
 jobs:
   linux-x86_64:
+    name: Build Linux x86_64 wheels
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
@@ -30,6 +31,7 @@ jobs:
           path: dist/*
 
   linux-aarch64:
+    name: Build Linux aarch64 wheels
     runs-on: ubuntu-24.04-arm
     steps:
       - uses: actions/checkout@v4
@@ -48,6 +50,7 @@ jobs:
           path: dist/*
 
   musllinux-x86_64:
+    name: Build musllinux x86_64 wheels
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
@@ -66,6 +69,7 @@ jobs:
           path: dist/*
 
   windows:
+    name: Build Windows wheels
     runs-on: ${{ matrix.runner }}
     strategy:
       matrix:
@@ -100,6 +104,7 @@ jobs:
           path: dist/*
 
   macos:
+    name: Build macOS wheels
     runs-on: ${{ matrix.runner }}
     strategy:
       matrix:
@@ -124,6 +129,7 @@ jobs:
           path: dist/*
 
   sdist:
+    name: Build sdist
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -139,6 +145,107 @@ jobs:
           name: dist-sdist
           path: dist/*
 
+  binary-linux-x86_64:
+    name: Build Linux x86_64 firebase binary
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - name: Build firebase CLI
+        run: cargo build --release --bin firebase
+
+      - name: Package firebase CLI
+        shell: bash
+        run: |
+          mkdir -p dist
+          cp target/release/firebase firebase
+          chmod +x firebase
+          tar -czf dist/firebase-linux-x86_64.tar.gz firebase
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: binary-linux-x86_64
+          path: dist/*
+
+  binary-linux-aarch64:
+    name: Build Linux aarch64 firebase binary
+    runs-on: ubuntu-24.04-arm
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - name: Build firebase CLI
+        run: cargo build --release --bin firebase
+
+      - name: Package firebase CLI
+        shell: bash
+        run: |
+          mkdir -p dist
+          cp target/release/firebase firebase
+          chmod +x firebase
+          tar -czf dist/firebase-linux-aarch64.tar.gz firebase
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: binary-linux-aarch64
+          path: dist/*
+
+  binary-macos:
+    name: Build macOS firebase binary
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      matrix:
+        include:
+          - runner: macos-15-intel
+            suffix: macos-x86_64
+          - runner: macos-latest
+            suffix: macos-aarch64
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - name: Build firebase CLI
+        run: cargo build --release --bin firebase
+
+      - name: Package firebase CLI
+        shell: bash
+        run: |
+          mkdir -p dist
+          cp target/release/firebase firebase
+          chmod +x firebase
+          tar -czf dist/firebase-${{ matrix.suffix }}.tar.gz firebase
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: binary-${{ matrix.suffix }}
+          path: dist/*
+
+  binary-windows:
+    name: Build Windows firebase binary
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - name: Build firebase CLI
+        run: cargo build --release --bin firebase
+
+      - name: Package firebase CLI
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force dist | Out-Null
+          Compress-Archive -Path target\release\firebase.exe -DestinationPath dist\firebase-windows-x86_64.zip
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: binary-windows-x86_64
+          path: dist\*
+
   release-github:
     name: Upload everything to GitHub Releases
     runs-on: ubuntu-latest
@@ -150,6 +257,10 @@ jobs:
       - windows
       - macos
       - sdist
+      - binary-linux-x86_64
+      - binary-linux-aarch64
+      - binary-macos
+      - binary-windows
     permissions:
       contents: write
     steps:
@@ -187,7 +298,7 @@ jobs:
           path: dist
           merge-multiple: true
 
-      - name: Keep only PyPI-valid distributions
+      - name: Keep only PyPI-valid firre distributions
         shell: bash
         run: |
           shopt -s nullglob
@@ -195,12 +306,12 @@ jobs:
           for f in dist/*; do
             base="$(basename "$f")"
             case "$base" in
-              *.whl|*.tar.gz) ;;
+              firre-*.whl|firre-*.tar.gz) ;;
               *) rm -f "$f" ;;
             esac
           done
 
-          for f in dist/*.whl; do
+          for f in dist/firre-*.whl; do
             base="$(basename "$f")"
             if [[ "$base" == *-linux_* ]] && [[ "$base" != *manylinux* ]] && [[ "$base" != *musllinux* ]]; then
               echo "Removing non-PyPI wheel: $base"

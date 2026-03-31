@@ -22,7 +22,7 @@ Supported flows:
 pip install firre
 ```
 
-`firre` is published as a Python package built with `maturin`, with Python support declared as `>=3.8`. 1
+`firre` is published as a Python package built with `maturin`, with Python support declared as `>=3.8`. 
 
 ### Rust
 
@@ -93,7 +93,7 @@ response = fire.auth.emailPwdSignIn(
 
 ### `firre.Firebase(api_key)`
 
-Creates a Firebase client bound to your Firebase Web API key. The Python `Firebase` class exposes an `auth` property that returns an `Auth` object. 2
+Creates a Firebase client bound to your Firebase Web API key. The Python `Firebase` class exposes an `auth` property that returns an `Auth` object.
 
 ### `fire.auth.emailPwdSignIn(email, password, headers=None)`
 
@@ -114,7 +114,7 @@ Returns an `AuthResponse` with:
 
 Creates a new user with email and password.
 
-Returns an `AuthResponse` with the same fields as above. 3
+Returns an `AuthResponse` with the same fields as above.
 
 ### `fire.auth.refreshTokenAuth(refresh_token, headers=None)`
 
@@ -151,11 +151,11 @@ Typical errors include:
 - `TOKEN_EXPIRED`
 - `WEAK_PASSWORD`
 
-The Rust request layer also returns descriptive errors for request, parse, and HTTP failures. 4
+The Rust request layer also returns descriptive errors for request, parse, and HTTP failures.
 
 ## CLI usage
 
-Download the binary for your platform from the repository releases. The repo currently lists release `v0.1.20` as the latest. 5
+Download the binary for your platform from the repository releases. The repo currently lists release `v0.1.20` as the latest.
 
 ### Sign in
 
@@ -179,7 +179,7 @@ CLI output is raw JSON from the Firebase API.
 
 ## Rust usage
 
-The crate includes request helpers for the same auth flows. The current source exposes `core_email_pwd_sign_in`, `core_email_pwd_sign_up`, and `core_refresh_token`. 6
+The crate includes request helpers for the same auth flows. The current source exposes `core_email_pwd_sign_in`, `core_email_pwd_sign_up`, and `core_refresh_token`.
 
 ```rust
 use firre::firebase::auth::requests::core_email_pwd_sign_in;
@@ -201,18 +201,6 @@ fn main() {
 
 ## Android / Termux
 
-Prebuilt Android `aarch64` wheels are referenced in the project README via GitHub Releases. 7
+Prebuilt Android `aarch64` wheels are referenced in the project README via GitHub Releases.
 
-## Tech stack
 
-- Rust
-- PyO3
-- reqwest
-- maturin
-- clap
-
-These are declared in the repository source and packaging files. 8
-
-## License
-
-MIT
