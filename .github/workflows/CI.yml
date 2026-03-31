@@ -141,33 +141,59 @@ jobs:
   
   android-aarch64:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: ["3.10", "3.11", "3.12", "3.13"]
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install Rust Android target
-        run: rustup target add aarch64-linux-android
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
 
       - name: Install maturin
         run: pip install maturin
 
-      - name: Install Android NDK
+      - name: Install Rust Android target
+        run: rustup target add aarch64-linux-android
+
+      - name: Install Android NDK r25b
         uses: nttld/setup-ndk@v1
+        id: setup-ndk
         with:
-          ndk-version: r27c
+          ndk-version: r25b
           add-to-path: true
 
-      - name: Build Android wheel
+      - name: Build Android aarch64 wheel
         env:
           ANDROID_API_LEVEL: "24"
-          CARGO_TARGET_AARCH64_LINUX_ANDROID_LINKER: ${{ env.ANDROID_NDK_HOME }}/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android24-clang
+          ANDROID_NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
         run: |
+          export NDK_TOOLCHAIN=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64
+          export CLANG=$NDK_TOOLCHAIN/bin/aarch64-linux-android24-clang
+          export AR=$NDK_TOOLCHAIN/bin/llvm-ar
+          export TERMUX_LIBDIR=/data/data/com.termux/files/usr/lib
+          export PYTHONVER=$(python -c "import sys; print(f'{sys.version_info.major}{sys.version_info.minor}')")
+
+          # patch linker flags: hardcode Termux lib path + force libpython linking
+          export CARGO_TARGET_AARCH64_LINUX_ANDROID_LINKER=$CLANG
+          export CARGO_TARGET_AARCH64_LINUX_ANDROID_AR=$AR
+          export RUSTFLAGS="-C link-arg=-Wl,-rpath,$TERMUX_LIBDIR -C link-arg=-Wl,--no-as-needed"
+
           maturin build --release \
             --target aarch64-linux-android \
-            --out dist
+            --out dist \
+            -i python${{ matrix.python }}
+
+          # rename android wheel to linux_aarch64 so Termux pip accepts it
+          for f in dist/*.whl; do
+            newname=$(echo "$f" | sed 's/android_[0-9]*_arm64_v8a/linux_aarch64/')
+            mv "$f" "$newname"
+          done
 
       - uses: actions/upload-artifact@v4
         with:
-          name: dist-android-aarch64
+          name: dist-android-aarch64-py${{ matrix.python }}
           path: dist/*
 
   release-github:
