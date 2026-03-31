@@ -144,10 +144,10 @@ jobs:
     strategy:
       matrix:
         python:
-          - { version: "3.10", tag: "cp310", abi: "cp310" }
-          - { version: "3.11", tag: "cp311", abi: "cp311" }
-          - { version: "3.12", tag: "cp312", abi: "cp312" }
-          - { version: "3.13", tag: "cp313", abi: "cp313" }
+          - { version: "3.10", tag: "cp310" }
+          - { version: "3.11", tag: "cp311" }
+          - { version: "3.12", tag: "cp312" }
+          - { version: "3.13", tag: "cp313" }
     steps:
       - uses: actions/checkout@v4
 
@@ -168,32 +168,22 @@ jobs:
           ndk-version: r25b
           add-to-path: true
 
-      - name: Create fake Android Python interpreter
-        run: |
-          MAJOR=$(echo "${{ matrix.python.version }}" | cut -d. -f1)
-          MINOR=$(echo "${{ matrix.python.version }}" | cut -d. -f2)
-          cat > /usr/local/bin/python-android <<'SCRIPT'
-          #!/bin/bash
-          echo "{\"major\": $MAJOR, \"minor\": $MINOR, \"abiflags\": \"\", \"interpreter\": \"cpython\", \"implementation_name\": \"cpython\", \"ext_suffix\": \".${{ matrix.python.tag }}-aarch64-linux-android.so\", \"abi_tag\": \"${{ matrix.python.abi }}\", \"m\": false, \"u\": false, \"d\": false, \"platform\": \"linux\"}"
-          SCRIPT
-          chmod +x /usr/local/bin/python-android
-
       - name: Build Android wheel
-        env:
-          ANDROID_API_LEVEL: "24"
-          PYO3_CROSS: "1"
-          PYO3_CROSS_LIB_DIR: ${{ steps.ndk.outputs.ndk-path }}/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/aarch64-linux-android/24
         run: |
           export NDK=${{ steps.ndk.outputs.ndk-path }}/toolchains/llvm/prebuilt/linux-x86_64/bin
           export CARGO_TARGET_AARCH64_LINUX_ANDROID_LINKER=$NDK/aarch64-linux-android24-clang
           export CC=$NDK/aarch64-linux-android24-clang
           export AR=$NDK/llvm-ar
+          export ANDROID_API_LEVEL=24
+          export PYO3_CROSS=1
+          export PYO3_CROSS_PYTHON_VERSION=${{ matrix.python.version }}
+          export PYO3_CROSS_LIB_DIR=${{ steps.ndk.outputs.ndk-path }}/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/aarch64-linux-android/24
           export RUSTFLAGS="-C link-arg=-Wl,-rpath,/data/data/com.termux/files/usr/lib -C link-arg=-Wl,--no-as-needed"
 
           maturin build --release \
             --target aarch64-linux-android \
             --out dist \
-            -i /usr/local/bin/python-android
+            -i python${{ matrix.python.version }}
 
           for f in dist/*.whl; do
             newname=$(echo "$f" | sed 's/android_[0-9]*_arm64_v8a/linux_aarch64/')
