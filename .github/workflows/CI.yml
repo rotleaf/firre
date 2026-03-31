@@ -168,15 +168,14 @@ jobs:
           ndk-version: r25b
           add-to-path: true
 
-      - name: Create fake Android Python interpreter script
+      - name: Create fake Android Python interpreter
         run: |
-          PYVER=${{ matrix.python.version }}
-          MAJOR=$(echo $PYVER | cut -d. -f1)
-          MINOR=$(echo $PYVER | cut -d. -f2)
-          cat > /usr/local/bin/python-android << EOF
+          MAJOR=$(echo "${{ matrix.python.version }}" | cut -d. -f1)
+          MINOR=$(echo "${{ matrix.python.version }}" | cut -d. -f2)
+          cat > /usr/local/bin/python-android <<'SCRIPT'
           #!/bin/bash
-          echo '{"major": '$MAJOR', "minor": '$MINOR', "abiflags": "", "interpreter": "cpython", "ext_suffix": ".cpython-${{ matrix.python.tag }}-aarch64-linux-android.so", "abi_tag": "${{ matrix.python.abi }}", "m": false, "u": false, "d": false, "platform": "linux"}'
-          EOF
+          echo "{\"major\": $MAJOR, \"minor\": $MINOR, \"abiflags\": \"\", \"interpreter\": \"cpython\", \"implementation_name\": \"cpython\", \"ext_suffix\": \".${{ matrix.python.tag }}-aarch64-linux-android.so\", \"abi_tag\": \"${{ matrix.python.abi }}\", \"m\": false, \"u\": false, \"d\": false, \"platform\": \"linux\"}"
+          SCRIPT
           chmod +x /usr/local/bin/python-android
 
       - name: Build Android wheel
@@ -196,7 +195,6 @@ jobs:
             --out dist \
             -i /usr/local/bin/python-android
 
-          # rename to linux_aarch64 so Termux pip accepts it
           for f in dist/*.whl; do
             newname=$(echo "$f" | sed 's/android_[0-9]*_arm64_v8a/linux_aarch64/')
             mv "$f" "$newname"
