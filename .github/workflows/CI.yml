@@ -140,30 +140,23 @@ jobs:
           path: dist/*
 
   android-aarch64:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
+    container:
+      image: reactnativecommunity/android-ci:latest
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v5
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
         with:
-          python-version: "3.10"
+          targets: aarch64-linux-android
 
       - name: Install maturin
         run: pip install maturin
 
-      - name: Install Rust Android target
-        run: rustup target add aarch64-linux-android
-
-      - name: Install Android NDK
-        uses: nttld/setup-ndk@v1
-        id: ndk
-        with:
-          ndk-version: r25b
-          add-to-path: true
-
       - name: Build Android abi3 wheel
         run: |
-          export NDK=${{ steps.ndk.outputs.ndk-path }}/toolchains/llvm/prebuilt/linux-x86_64/bin
+          export NDK=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin
           export CARGO_TARGET_AARCH64_LINUX_ANDROID_LINKER=$NDK/aarch64-linux-android24-clang
           export CC=$NDK/aarch64-linux-android24-clang
           export AR=$NDK/llvm-ar
