@@ -4,8 +4,9 @@ use pyo3_stub_gen::derive::{gen_stub_pyclass, gen_stub_pymethods};
 use serde_json::Value;
 
 use crate::firebase::auth::Auth;
-
+use crate::firebase::firestore::FirestoreClient;
 pub mod auth;
+pub mod firestore;
 
 #[gen_stub_pyclass]
 #[pyclass]
@@ -29,6 +30,14 @@ impl Firebase {
             api_key: self.api_key.clone(),
         }
     }
+
+    #[pyo3(name = "Firestore")]
+    fn firestore(&self, auth_token: String, project: String) -> FirestoreClient {
+        FirestoreClient {
+            auth_token,
+            project,
+        }
+    }
 }
 
 fn firebase_error(json: &Value) -> Result<(), String> {
@@ -44,5 +53,6 @@ fn firebase_error(json: &Value) -> Result<(), String> {
 pub fn register(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<Firebase>()?;
     auth::register(m)?;
+    firestore::register(m)?;
     Ok(())
 }

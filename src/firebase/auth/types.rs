@@ -41,6 +41,13 @@ impl RefreshResponse {
     }
 
     #[getter]
+    fn json<'py>(&self, py: Python<'py>) -> PyResult<Py<PyAny>> {
+        let json_mod = PyModule::import(py, "json")?;
+        let obj = json_mod.getattr("loads")?.call1((self.raw.as_str(),))?;
+        Ok(obj.unbind())
+    }
+
+    #[getter]
     #[pyo3(name = "idToken")]
     fn id_token(&self) -> &str {
         &self.id_token
@@ -84,6 +91,13 @@ impl AuthResponse {
             format!("Bearer {}", self.id_token),
         );
         map
+    }
+
+    #[getter]
+    fn json<'py>(&self, py: Python<'py>) -> PyResult<Py<PyAny>> {
+        let json_mod = PyModule::import(py, "json")?;
+        let obj = json_mod.getattr("loads")?.call1((self.raw.as_str(),))?;
+        Ok(obj.unbind())
     }
     #[getter]
     #[pyo3(name = "idToken")]
