@@ -36,11 +36,11 @@ impl Document {
             .map_err(PyErr::new::<PyRuntimeError, _>)
     }
 
-    #[pyo3(signature = (field_path, field_type, field_value, headers = None))]
+    #[pyo3(signature = (field_type, field_path, field_value, headers = None))]
     fn patch(
         &self,
-        field_path: &str,
         field_type: &str,
+        field_path: &str,
         field_value: &str,
         headers: Option<HashMap<String, String>>,
     ) -> PyResult<FirestoreResponse> {

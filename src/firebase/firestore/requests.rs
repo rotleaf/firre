@@ -79,8 +79,21 @@ pub fn core_patch(
                 return Err(format!("Invalid boolean: {field_value}"));
             }
         },
-        _ => {
+        "stringValue" => {
             serde_json::json!({"stringValue": field_value})
+        }
+        "nullValue" => {
+            serde_json::json!({"nullValue": null})
+        }
+        "timestampValue" => {
+            chrono::DateTime::parse_from_rfc3339(field_value).map_err(|_| format!(
+            "Invalid timestampValue: '{}' must be RFC3339 format e.g. 2026-03-19T15:37:04.272Z",
+            field_value
+        ))?;
+            serde_json::json!({ "timestampValue": field_value })
+        }
+        _ => {
+            return Err(format!("Invalid field type: {field_type}"));
         }
     };
 
@@ -91,12 +104,14 @@ pub fn core_patch(
         .header("Authorization", format!("Bearer {auth_token}"))
         .header("Content-Type", "application/json")
         .body(body.to_string());
+
     let builder = apply_headers(builder, headers);
     let response = builder.send().map_err(|e| format!("Request failed: {e}"))?;
     let status = response.status();
     let text = response
         .text()
         .map_err(|e| format!("Failed to read response: {e}"))?;
+
     if !status.is_success() {
         return Err(format!("HTTP {status}: {text}"));
     }
