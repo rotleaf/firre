@@ -18,10 +18,22 @@ jobs:
         with:
           python-version: "3.13"
 
-      - name: Install firre and pdoc
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install maturin
+        run: pip install maturin
+
+      - name: Generate stubs
+        run: cargo run --bin stub_gen
+
+      - name: Build and install wheel
         run: |
-          pip install pdoc
-          pip install firre --extra-index-url https://pypi.org/simple/
+          maturin build --release
+          pip install --force-reinstall target/wheels/*.whl
+
+      - name: Install pdoc
+        run: pip install pdoc
 
       - name: Generate docs
         run: pdoc firre --output-dir docs/
