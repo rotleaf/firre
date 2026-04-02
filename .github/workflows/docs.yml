@@ -36,7 +36,7 @@ jobs:
       - name: Copy stub into installed package
         run: |
           SITE=$(python -c "import site; print(site.getsitepackages()[0])")
-          cp python/firre/firre.pyi $SITE/firre/
+          cp python/firre/__init__.pyi $SITE/firre/
 
       - name: Install pdoc
         run: pip install pdoc
