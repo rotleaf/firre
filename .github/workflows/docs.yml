@@ -27,10 +27,16 @@ jobs:
       - name: Generate stubs
         run: cargo run --bin stub_gen
 
-      - name: Build and install wheel
+      - name: Build wheel
+        run: maturin build --release
+
+      - name: Install wheel
+        run: pip install --force-reinstall target/wheels/*.whl
+
+      - name: Copy stub into installed package
         run: |
-          maturin build --release
-          pip install --force-reinstall target/wheels/*.whl
+          SITE=$(python -c "import site; print(site.getsitepackages()[0])")
+          cp python/firre/firre.pyi $SITE/firre/
 
       - name: Install pdoc
         run: pip install pdoc
