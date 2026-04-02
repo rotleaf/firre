@@ -1,5 +1,7 @@
 use crate::firebase::firestore::{
-    requests::{core_delete_field, core_get, core_patch},
+    requests::{
+        core_delete_field, core_field_increment, core_get, core_patch, core_server_timestamp,
+    },
     types::FirestoreResponse,
 };
 use pyo3::{exceptions::PyRuntimeError, prelude::*};
@@ -37,6 +39,40 @@ impl Field {
             path: path.to_string(),
             field_name: field_name.to_string(),
         }
+    }
+
+    #[pyo3(name = "serverTimestamp", signature = (headers = None))]
+    fn server_timestamp(
+        &self,
+        headers: Option<HashMap<String, String>>,
+    ) -> PyResult<FirestoreResponse> {
+        core_server_timestamp(
+            &self.auth_token,
+            &self.project,
+            &self.path,
+            &self.field_name,
+            headers,
+        )
+        .map(|raw| FirestoreResponse { raw })
+        .map_err(PyErr::new::<PyRuntimeError, _>)
+    }
+
+    #[pyo3(signature = (amount, headers = None))]
+    fn increment(
+        &self,
+        amount: f64,
+        headers: Option<HashMap<String, String>>,
+    ) -> PyResult<FirestoreResponse> {
+        core_field_increment(
+            &self.auth_token,
+            &self.project,
+            &self.path,
+            &self.field_name,
+            amount,
+            headers,
+        )
+        .map(|raw| FirestoreResponse { raw })
+        .map_err(PyErr::new::<PyRuntimeError, _>)
     }
 
     #[pyo3(signature = (headers = None))]

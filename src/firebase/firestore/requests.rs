@@ -25,6 +25,90 @@ fn apply_headers(
     builder
 }
 
+/// timestamp value
+pub fn core_server_timestamp(
+    auth_token: &str,
+    project: &str,
+    path: &str,
+    field_path: &str,
+    headers: Option<HashMap<String, String>>,
+) -> Result<String, String> {
+    let commit_url = format!(
+        "https://firestore.googleapis.com/v1/projects/{project}/databases/(default)/documents:commit",
+    );
+    let body = serde_json::json!({
+        "writes": [{
+            "transform": {
+                "document": format!("projects/{project}/databases/(default)/documents/{}", path.trim_start_matches("/")),
+                "fieldTransforms": [{
+                    "fieldPath": field_path,
+                    "setToServerValue": "REQUEST_TIME"
+                }]
+            }
+        }]
+    });
+
+    let builder = client()
+        .post(&commit_url)
+        .header("Authorization", format!("Bearer {auth_token}"))
+        .header("Content-Type", "application/json")
+        .body(body.to_string());
+    let builder = apply_headers(builder, headers);
+    let response = builder.send().map_err(|e| format!("Request failed:{e}"))?;
+    let status = response.status();
+    let text = response
+        .text()
+        .map_err(|e| format!("Failed to read response: {e}"))?;
+
+    if !status.is_success() {
+        return Err(format!("HTTP {status}: {text}"));
+    }
+
+    Ok(text)
+}
+
+/// increment numeric fields, integerValue
+pub fn core_field_increment(
+    auth_token: &str,
+    project: &str,
+    path: &str,
+    field_path: &str,
+    amount: f64,
+    headers: Option<HashMap<String, String>>,
+) -> Result<String, String> {
+    let increment_value = if amount.fract() == 0.0 {
+        serde_json::json!({ "integerValue": amount as i64 })
+    } else {
+        serde_json::json!({ "doubleValue": amount })
+    };
+    let body = serde_json::json!({
+        "writes": [{
+            "transform": {
+                "document": format!("projects/{project}/databases/(default)/documents/{}", path.trim_start_matches("/")),
+                "fieldTransforms": [{
+                    "fieldPath": field_path,
+                    "increment": increment_value
+                }]
+            }
+        }]
+    });
+
+    let builder = client().post(format!("https://firestore.googleapis.com/v1/projects/{project}/databases/(default)/documents:commit")).header("Authorization", format!("Bearer {auth_token}")).header("Content-Type", "application/json").body(body.to_string());
+    let builder = apply_headers(builder, headers);
+    let response = builder.send().map_err(|e| format!("Request Failed: {e}"))?;
+    let status = response.status();
+    let text = response
+        .text()
+        .map_err(|e| format!("Failed to read response: {e}"))?;
+
+    if !status.is_success() {
+        return Err(format!("HTTP {status}:{text}"));
+    }
+
+    Ok(text)
+}
+
+/// delete a field from a document
 pub fn core_delete_field(
     auth_token: &str,
     project: &str,
@@ -58,6 +142,7 @@ pub fn core_delete_field(
     Ok(text)
 }
 
+/// get a firestore document
 pub fn core_get(
     auth_token: &str,
     project: &str,
@@ -80,6 +165,7 @@ pub fn core_get(
     Ok(text)
 }
 
+/// patch a field in a document
 pub fn core_patch(
     auth_token: &str,
     project: &str,
