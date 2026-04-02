@@ -34,6 +34,9 @@
                     <a class="class" href="#Firebase">Firebase</a>
                             <ul class="memberlist">
                         <li>
+                                <a class="function" href="#Firebase.Firestore">Firestore</a>
+                        </li>
+                        <li>
                                 <a class="variable" href="#Firebase.auth">auth</a>
                         </li>
                 </ul>
@@ -58,22 +61,28 @@
                     <a class="class" href="#AuthResponse">AuthResponse</a>
                             <ul class="memberlist">
                         <li>
-                                <a class="variable" href="#AuthResponse.idToken">idToken</a>
+                                <a class="variable" href="#AuthResponse.refreshToken">refreshToken</a>
                         </li>
                         <li>
-                                <a class="variable" href="#AuthResponse.raw">raw</a>
+                                <a class="variable" href="#AuthResponse.json">json</a>
                         </li>
                         <li>
-                                <a class="variable" href="#AuthResponse.userId">userId</a>
+                                <a class="variable" href="#AuthResponse.getAuthHeader">getAuthHeader</a>
                         </li>
                         <li>
                                 <a class="variable" href="#AuthResponse.expiresIn">expiresIn</a>
                         </li>
                         <li>
+                                <a class="variable" href="#AuthResponse.userId">userId</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#AuthResponse.idToken">idToken</a>
+                        </li>
+                        <li>
                                 <a class="variable" href="#AuthResponse.email">email</a>
                         </li>
                         <li>
-                                <a class="variable" href="#AuthResponse.refreshToken">refreshToken</a>
+                                <a class="variable" href="#AuthResponse.raw">raw</a>
                         </li>
                 </ul>
 
@@ -82,22 +91,79 @@
                     <a class="class" href="#RefreshResponse">RefreshResponse</a>
                             <ul class="memberlist">
                         <li>
-                                <a class="variable" href="#RefreshResponse.accessToken">accessToken</a>
+                                <a class="variable" href="#RefreshResponse.expiresIn">expiresIn</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#RefreshResponse.json">json</a>
                         </li>
                         <li>
                                 <a class="variable" href="#RefreshResponse.refreshToken">refreshToken</a>
                         </li>
                         <li>
+                                <a class="variable" href="#RefreshResponse.raw">raw</a>
+                        </li>
+                        <li>
                                 <a class="variable" href="#RefreshResponse.idToken">idToken</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#RefreshResponse.getAuthHeader">getAuthHeader</a>
                         </li>
                         <li>
                                 <a class="variable" href="#RefreshResponse.userId">userId</a>
                         </li>
                         <li>
-                                <a class="variable" href="#RefreshResponse.expiresIn">expiresIn</a>
+                                <a class="variable" href="#RefreshResponse.accessToken">accessToken</a>
+                        </li>
+                </ul>
+
+            </li>
+            <li>
+                    <a class="class" href="#FirestoreClient">FirestoreClient</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="function" href="#FirestoreClient.doc">doc</a>
+                        </li>
+                </ul>
+
+            </li>
+            <li>
+                    <a class="class" href="#Document">Document</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="function" href="#Document.get">get</a>
                         </li>
                         <li>
-                                <a class="variable" href="#RefreshResponse.raw">raw</a>
+                                <a class="function" href="#Document.patch">patch</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#Document.Field">Field</a>
+                        </li>
+                </ul>
+
+            </li>
+            <li>
+                    <a class="class" href="#Field">Field</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="function" href="#Field.serverTimestamp">serverTimestamp</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#Field.increment">increment</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#Field.delete">delete</a>
+                        </li>
+                </ul>
+
+            </li>
+            <li>
+                    <a class="class" href="#FirestoreResponse">FirestoreResponse</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="variable" href="#FirestoreResponse.json">json</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#FirestoreResponse.raw">raw</a>
                         </li>
                 </ul>
 
@@ -135,6 +201,21 @@
     
     
 
+                            <div id="Firebase.Firestore" class="classattr">
+                                <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">Firestore</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="o">/</span>, </span><span class="param"><span class="n">auth_token</span>, </span><span class="param"><span class="n">project</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#Firebase.Firestore"></a>
+    
+            <div class="docstring"><p>The type of the None singleton.</p>
+</div>
+
+
+                            </div>
                             <div id="Firebase.auth" class="classattr">
                                 <div class="attr variable">
             <span class="name">auth</span>
@@ -217,35 +298,35 @@
     
     
 
-                            <div id="AuthResponse.idToken" class="classattr">
+                            <div id="AuthResponse.refreshToken" class="classattr">
                                 <div class="attr variable">
-            <span class="name">idToken</span>
+            <span class="name">refreshToken</span>
 
         
     </div>
-    <a class="headerlink" href="#AuthResponse.idToken"></a>
+    <a class="headerlink" href="#AuthResponse.refreshToken"></a>
     
     
 
                             </div>
-                            <div id="AuthResponse.raw" class="classattr">
+                            <div id="AuthResponse.json" class="classattr">
                                 <div class="attr variable">
-            <span class="name">raw</span>
+            <span class="name">json</span>
 
         
     </div>
-    <a class="headerlink" href="#AuthResponse.raw"></a>
+    <a class="headerlink" href="#AuthResponse.json"></a>
     
     
 
                             </div>
-                            <div id="AuthResponse.userId" class="classattr">
+                            <div id="AuthResponse.getAuthHeader" class="classattr">
                                 <div class="attr variable">
-            <span class="name">userId</span>
+            <span class="name">getAuthHeader</span>
 
         
     </div>
-    <a class="headerlink" href="#AuthResponse.userId"></a>
+    <a class="headerlink" href="#AuthResponse.getAuthHeader"></a>
     
     
 
@@ -261,6 +342,28 @@
     
 
                             </div>
+                            <div id="AuthResponse.userId" class="classattr">
+                                <div class="attr variable">
+            <span class="name">userId</span>
+
+        
+    </div>
+    <a class="headerlink" href="#AuthResponse.userId"></a>
+    
+    
+
+                            </div>
+                            <div id="AuthResponse.idToken" class="classattr">
+                                <div class="attr variable">
+            <span class="name">idToken</span>
+
+        
+    </div>
+    <a class="headerlink" href="#AuthResponse.idToken"></a>
+    
+    
+
+                            </div>
                             <div id="AuthResponse.email" class="classattr">
                                 <div class="attr variable">
             <span class="name">email</span>
@@ -272,13 +375,13 @@
     
 
                             </div>
-                            <div id="AuthResponse.refreshToken" class="classattr">
+                            <div id="AuthResponse.raw" class="classattr">
                                 <div class="attr variable">
-            <span class="name">refreshToken</span>
+            <span class="name">raw</span>
 
         
     </div>
-    <a class="headerlink" href="#AuthResponse.refreshToken"></a>
+    <a class="headerlink" href="#AuthResponse.raw"></a>
     
     
 
@@ -296,13 +399,24 @@
     
     
 
-                            <div id="RefreshResponse.accessToken" class="classattr">
+                            <div id="RefreshResponse.expiresIn" class="classattr">
                                 <div class="attr variable">
-            <span class="name">accessToken</span>
+            <span class="name">expiresIn</span>
 
         
     </div>
-    <a class="headerlink" href="#RefreshResponse.accessToken"></a>
+    <a class="headerlink" href="#RefreshResponse.expiresIn"></a>
+    
+    
+
+                            </div>
+                            <div id="RefreshResponse.json" class="classattr">
+                                <div class="attr variable">
+            <span class="name">json</span>
+
+        
+    </div>
+    <a class="headerlink" href="#RefreshResponse.json"></a>
     
     
 
@@ -318,6 +432,17 @@
     
 
                             </div>
+                            <div id="RefreshResponse.raw" class="classattr">
+                                <div class="attr variable">
+            <span class="name">raw</span>
+
+        
+    </div>
+    <a class="headerlink" href="#RefreshResponse.raw"></a>
+    
+    
+
+                            </div>
                             <div id="RefreshResponse.idToken" class="classattr">
                                 <div class="attr variable">
             <span class="name">idToken</span>
@@ -325,6 +450,17 @@
         
     </div>
     <a class="headerlink" href="#RefreshResponse.idToken"></a>
+    
+    
+
+                            </div>
+                            <div id="RefreshResponse.getAuthHeader" class="classattr">
+                                <div class="attr variable">
+            <span class="name">getAuthHeader</span>
+
+        
+    </div>
+    <a class="headerlink" href="#RefreshResponse.getAuthHeader"></a>
     
     
 
@@ -340,24 +476,192 @@
     
 
                             </div>
-                            <div id="RefreshResponse.expiresIn" class="classattr">
+                            <div id="RefreshResponse.accessToken" class="classattr">
                                 <div class="attr variable">
-            <span class="name">expiresIn</span>
+            <span class="name">accessToken</span>
 
         
     </div>
-    <a class="headerlink" href="#RefreshResponse.expiresIn"></a>
+    <a class="headerlink" href="#RefreshResponse.accessToken"></a>
     
     
 
                             </div>
-                            <div id="RefreshResponse.raw" class="classattr">
+                </section>
+                <section id="FirestoreClient">
+                    <div class="attr class">
+            
+    <span class="def">class</span>
+    <span class="name">FirestoreClient</span>:
+
+        
+    </div>
+    <a class="headerlink" href="#FirestoreClient"></a>
+    
+    
+
+                            <div id="FirestoreClient.doc" class="classattr">
+                                <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">doc</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="o">/</span>, </span><span class="param"><span class="n">path</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#FirestoreClient.doc"></a>
+    
+            <div class="docstring"><p>The type of the None singleton.</p>
+</div>
+
+
+                            </div>
+                </section>
+                <section id="Document">
+                    <div class="attr class">
+            
+    <span class="def">class</span>
+    <span class="name">Document</span>:
+
+        
+    </div>
+    <a class="headerlink" href="#Document"></a>
+    
+    
+
+                            <div id="Document.get" class="classattr">
+                                <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">get</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="o">/</span>, </span><span class="param"><span class="n">headers</span><span class="o">=</span><span class="kc">None</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#Document.get"></a>
+    
+            <div class="docstring"><p>The type of the None singleton.</p>
+</div>
+
+
+                            </div>
+                            <div id="Document.patch" class="classattr">
+                                <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">patch</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="o">/</span>, </span><span class="param"><span class="n">field_type</span>, </span><span class="param"><span class="n">field_path</span>, </span><span class="param"><span class="n">field_value</span>, </span><span class="param"><span class="n">headers</span><span class="o">=</span><span class="kc">None</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#Document.patch"></a>
+    
+            <div class="docstring"><p>The type of the None singleton.</p>
+</div>
+
+
+                            </div>
+                            <div id="Document.Field" class="classattr">
+                                <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">Field</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="o">/</span>, </span><span class="param"><span class="n">field_name</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#Document.Field"></a>
+    
+            <div class="docstring"><p>The type of the None singleton.</p>
+</div>
+
+
+                            </div>
+                </section>
+                <section id="Field">
+                    <div class="attr class">
+            
+    <span class="def">class</span>
+    <span class="name">Field</span>:
+
+        
+    </div>
+    <a class="headerlink" href="#Field"></a>
+    
+    
+
+                            <div id="Field.serverTimestamp" class="classattr">
+                                <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">serverTimestamp</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="o">/</span>, </span><span class="param"><span class="n">headers</span><span class="o">=</span><span class="kc">None</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#Field.serverTimestamp"></a>
+    
+            <div class="docstring"><p>The type of the None singleton.</p>
+</div>
+
+
+                            </div>
+                            <div id="Field.increment" class="classattr">
+                                <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">increment</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="o">/</span>, </span><span class="param"><span class="n">amount</span>, </span><span class="param"><span class="n">headers</span><span class="o">=</span><span class="kc">None</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#Field.increment"></a>
+    
+            <div class="docstring"><p>The type of the None singleton.</p>
+</div>
+
+
+                            </div>
+                            <div id="Field.delete" class="classattr">
+                                <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">delete</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="o">/</span>, </span><span class="param"><span class="n">headers</span><span class="o">=</span><span class="kc">None</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#Field.delete"></a>
+    
+            <div class="docstring"><p>The type of the None singleton.</p>
+</div>
+
+
+                            </div>
+                </section>
+                <section id="FirestoreResponse">
+                    <div class="attr class">
+            
+    <span class="def">class</span>
+    <span class="name">FirestoreResponse</span>:
+
+        
+    </div>
+    <a class="headerlink" href="#FirestoreResponse"></a>
+    
+    
+
+                            <div id="FirestoreResponse.json" class="classattr">
+                                <div class="attr variable">
+            <span class="name">json</span>
+
+        
+    </div>
+    <a class="headerlink" href="#FirestoreResponse.json"></a>
+    
+    
+
+                            </div>
+                            <div id="FirestoreResponse.raw" class="classattr">
                                 <div class="attr variable">
             <span class="name">raw</span>
 
         
     </div>
-    <a class="headerlink" href="#RefreshResponse.raw"></a>
+    <a class="headerlink" href="#FirestoreResponse.raw"></a>
     
     
 
