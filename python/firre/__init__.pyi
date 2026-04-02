@@ -7,6 +7,7 @@ __all__ = [
     "Auth",
     "AuthResponse",
     "Document",
+    "Field",
     "Firebase",
     "FirestoreClient",
     "FirestoreResponse",
@@ -43,6 +44,12 @@ class Document:
     def __new__(cls, auth_token: builtins.str, project: builtins.str, path: builtins.str) -> Document: ...
     def get(self, headers: typing.Optional[typing.Mapping[builtins.str, builtins.str]] = None) -> FirestoreResponse: ...
     def patch(self, field_type: builtins.str, field_path: builtins.str, field_value: builtins.str, headers: typing.Optional[typing.Mapping[builtins.str, builtins.str]] = None) -> FirestoreResponse: ...
+    def Field(self, field_name: builtins.str) -> Field: ...
+
+@typing.final
+class Field:
+    def __new__(cls, auth_token: builtins.str, project: builtins.str, path: builtins.str, field_name: builtins.str) -> Field: ...
+    def delete(self, headers: typing.Optional[typing.Mapping[builtins.str, builtins.str]] = None) -> FirestoreResponse: ...
 
 @typing.final
 class Firebase:

@@ -25,6 +25,39 @@ fn apply_headers(
     builder
 }
 
+pub fn core_delete_field(
+    auth_token: &str,
+    project: &str,
+    path: &str,
+    field_path: &str,
+    headers: Option<HashMap<String, String>>,
+) -> Result<String, String> {
+    let url = format!(
+        "{}?updateMask.fieldPaths={}",
+        build_url(project, path),
+        field_path
+    );
+    let body = serde_json::json!({"fields": {}});
+    let builder = client()
+        .patch(&url)
+        .header("Authorization", format!("Bearer {auth_token}"))
+        .header("Content-Type", "application-json")
+        .body(body.to_string());
+    let builder = apply_headers(builder, headers);
+    let response = builder.send().map_err(|e| format!("Request Failed: {e}"))?;
+    let status = response.status();
+
+    let text = response
+        .text()
+        .map_err(|_e| "Failed to read response".to_string())?;
+
+    if !status.is_success() {
+        return Err(format!("HTTP {status}: {text}"));
+    }
+
+    Ok(text)
+}
+
 pub fn core_get(
     auth_token: &str,
     project: &str,

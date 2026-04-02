@@ -1,5 +1,5 @@
 use crate::firebase::firestore::{
-    requests::{core_get, core_patch},
+    requests::{core_delete_field, core_get, core_patch},
     types::FirestoreResponse,
 };
 use pyo3::{exceptions::PyRuntimeError, prelude::*};
@@ -15,6 +15,42 @@ pub struct Document {
     auth_token: String,
     project: String,
     path: String,
+}
+
+#[gen_stub_pyclass]
+#[pyclass]
+pub struct Field {
+    auth_token: String,
+    project: String,
+    path: String,
+    field_name: String,
+}
+
+#[gen_stub_pymethods]
+#[pymethods]
+impl Field {
+    #[new]
+    pub fn new(auth_token: &str, project: &str, path: &str, field_name: &str) -> Self {
+        Self {
+            auth_token: auth_token.to_string(),
+            project: project.to_string(),
+            path: path.to_string(),
+            field_name: field_name.to_string(),
+        }
+    }
+
+    #[pyo3(signature = (headers = None))]
+    fn delete(&self, headers: Option<HashMap<String, String>>) -> PyResult<FirestoreResponse> {
+        core_delete_field(
+            &self.auth_token,
+            &self.project,
+            &self.path,
+            &self.field_name,
+            headers,
+        )
+        .map(|raw| FirestoreResponse { raw })
+        .map_err(PyErr::new::<PyRuntimeError, _>)
+    }
 }
 
 #[gen_stub_pymethods]
@@ -56,6 +92,16 @@ impl Document {
         .map(|raw| FirestoreResponse { raw })
         .map_err(PyErr::new::<PyRuntimeError, _>)
     }
+
+    #[pyo3(name = "Field")]
+    fn field(&self, field_name: String) -> Field {
+        Field {
+            auth_token: self.auth_token.to_string(),
+            project: self.project.to_string(),
+            path: self.path.to_string(),
+            field_name,
+        }
+    }
 }
 
 #[gen_stub_pyclass]
@@ -88,6 +134,7 @@ impl FirestoreClient {
 pub fn register(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<FirestoreClient>()?;
     m.add_class::<Document>()?;
+    m.add_class::<Field>()?;
     m.add_class::<FirestoreResponse>()?;
     Ok(())
 }
