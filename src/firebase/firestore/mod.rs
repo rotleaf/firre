@@ -1,7 +1,8 @@
 use crate::firebase::firestore::{
     requests::{
-        core_delete_collection, core_delete_document, core_delete_field, core_field_increment,
-        core_get, core_get_collection, core_get_document_ids, core_get_documents, core_patch,
+        core_count_documents, core_delete_collection, core_delete_collection_concurrent,
+        core_delete_document, core_delete_field, core_field_increment, core_get,
+        core_get_collection, core_get_document_ids, core_get_documents, core_patch,
         core_server_timestamp,
     },
     types::FirestoreResponse,
@@ -149,6 +150,15 @@ impl Document {
             .map(|raw| FirestoreResponse { raw })
             .map_err(PyErr::new::<PyRuntimeError, _>)
     }
+
+    #[pyo3(name = "collection")]
+    fn collection(&self, collection_id: String) -> Collection {
+        Collection {
+            auth_token: self.auth_token.to_string(),
+            project: self.project.to_string(),
+            path: format!("{}/{}", self.path.trim_end_matches('/'), collection_id),
+        }
+    }
 }
 
 #[gen_stub_pyclass]
@@ -277,6 +287,28 @@ impl Collection {
                 })
             })
             .collect()
+    }
+
+    #[pyo3(name = "deleteAllConcurrent", signature = (concurrency = 20, headers = None))]
+    fn delete_all_concurrent(
+        &self,
+        concurrency: usize,
+        headers: Option<HashMap<String, String>>,
+    ) -> PyResult<u32> {
+        core_delete_collection_concurrent(
+            &self.auth_token,
+            &self.project,
+            &self.path,
+            concurrency,
+            headers,
+        )
+        .map_err(PyErr::new::<PyRuntimeError, _>)
+    }
+
+    #[pyo3(name = "documentCount", signature = (headers = None))]
+    fn count(&self, headers: Option<HashMap<String, String>>) -> PyResult<i64> {
+        core_count_documents(&self.auth_token, &self.project, &self.path, headers)
+            .map_err(PyErr::new::<PyRuntimeError, _>)
     }
 }
 

@@ -1,5 +1,7 @@
 use reqwest::blocking::{Client, RequestBuilder};
 use std::collections::HashMap;
+use std::sync::{Arc, Mutex};
+use std::thread;
 
 fn build_url(project: &str, path: &str) -> String {
     format!(
@@ -571,4 +573,182 @@ pub fn core_get_documents(
     }
 
     Ok(docs_out)
+}
+
+/// delete all documents in a collection using concurrent single-document
+/// DELETE calls (not batchWrite) — for cases where batchWrite is blocked
+/// by rules/permissions but individual deletes are allowed.
+pub fn core_delete_collection_concurrent(
+    auth_token: &str,
+    project: &str,
+    collection_path: &str,
+    concurrency: usize,
+    headers: Option<HashMap<String, String>>,
+) -> Result<u32, String> {
+    let mut all_names: Vec<String> = Vec::new();
+    let mut page_token: Option<String> = None;
+
+    // Phase 1: collect every doc's full path (name-only mask, cheap)
+    loop {
+        let list_json = core_list_documents(
+            auth_token,
+            project,
+            collection_path,
+            300,
+            page_token.as_deref(),
+            headers.clone(),
+        )?;
+
+        let parsed: serde_json::Value =
+            serde_json::from_str(&list_json).map_err(|e| format!("Bad list response: {e}"))?;
+
+        if let Some(docs) = parsed.get("documents").and_then(|d| d.as_array()) {
+            for doc in docs {
+                if let Some(name) = doc.get("name").and_then(|n| n.as_str()) {
+                    all_names.push(name.to_string());
+                }
+            }
+        }
+
+        page_token = parsed
+            .get("nextPageToken")
+            .and_then(|t| t.as_str())
+            .map(String::from);
+
+        if page_token.is_none() {
+            break;
+        }
+    }
+
+    // Phase 2: delete concurrently, capped at `concurrency` in-flight threads per batch
+    let total_deleted = Arc::new(Mutex::new(0u32));
+    let errors: Arc<Mutex<Vec<String>>> = Arc::new(Mutex::new(Vec::new()));
+
+    for chunk in all_names.chunks(concurrency) {
+        let mut handles = Vec::new();
+
+        for name in chunk {
+            let auth_token = auth_token.to_string();
+            let name = name.clone();
+            let headers = headers.clone();
+            let total_deleted = Arc::clone(&total_deleted);
+            let errors = Arc::clone(&errors);
+
+            handles.push(thread::spawn(move || {
+                let url = format!("https://firestore.googleapis.com/v1/{name}");
+                let builder = Client::new()
+                    .delete(&url)
+                    .header("Authorization", format!("Bearer {auth_token}"));
+                let builder = apply_headers(builder, headers);
+
+                match builder.send() {
+                    Ok(resp) if resp.status().is_success() => {
+                        *total_deleted.lock().unwrap() += 1;
+                    }
+                    Ok(resp) => {
+                        let status = resp.status();
+                        let text = resp.text().unwrap_or_default();
+                        errors
+                            .lock()
+                            .unwrap()
+                            .push(format!("HTTP {status}: {text}"));
+                    }
+                    Err(e) => {
+                        errors.lock().unwrap().push(format!("Request failed: {e}"));
+                    }
+                }
+            }));
+        }
+
+        for h in handles {
+            let _ = h.join();
+        }
+    }
+
+    let errs = errors.lock().unwrap();
+    if !errs.is_empty() {
+        return Err(format!(
+            "{} deletes failed, first error: {}",
+            errs.len(),
+            errs[0]
+        ));
+    }
+
+    Ok(*total_deleted.lock().unwrap())
+}
+
+/// count documents in a collection using Firestore's aggregation query (COUNT).
+/// Much cheaper than listing all documents just to measure length.
+pub fn core_count_documents(
+    auth_token: &str,
+    project: &str,
+    collection_path: &str,
+    headers: Option<HashMap<String, String>>,
+) -> Result<i64, String> {
+    // collection_path is relative, e.g. "users" or "users/abc/orders"
+    let collection_id = collection_path
+        .trim_matches('/')
+        .rsplit('/')
+        .next()
+        .ok_or_else(|| "Empty collection path".to_string())?;
+
+    let parent_path = {
+        let trimmed = collection_path.trim_matches('/');
+        match trimmed.rfind('/') {
+            Some(idx) => &trimmed[..idx],
+            None => "",
+        }
+    };
+
+    let parent_url = format!(
+        "https://firestore.googleapis.com/v1/projects/{project}/databases/(default)/documents/{parent}",
+        parent = parent_path
+    );
+    let url = format!("{}:runAggregationQuery", parent_url.trim_end_matches('/'));
+
+    let body = serde_json::json!({
+        "structuredAggregationQuery": {
+            "structuredQuery": {
+                "from": [{ "collectionId": collection_id }]
+            },
+            "aggregations": [{
+                "alias": "count",
+                "count": {}
+            }]
+        }
+    });
+
+    let builder = client()
+        .post(&url)
+        .header("Authorization", format!("Bearer {auth_token}"))
+        .header("Content-Type", "application/json")
+        .body(body.to_string());
+    let builder = apply_headers(builder, headers);
+    let response = builder.send().map_err(|e| format!("Request failed: {e}"))?;
+    let status = response.status();
+    let text = response
+        .text()
+        .map_err(|e| format!("Failed to read response: {e}"))?;
+
+    if !status.is_success() {
+        return Err(format!("HTTP {status}: {text}"));
+    }
+
+    // response is a JSON array of results; the count aggregation lands in
+    // result.aggregateFields.count.integerValue
+    let parsed: serde_json::Value =
+        serde_json::from_str(&text).map_err(|e| format!("Bad aggregation response: {e}"))?;
+
+    let count_str = parsed
+        .get(0)
+        .and_then(|first| first.get("result"))
+        .and_then(|r| r.get("aggregateFields"))
+        .and_then(|af| af.get("count"))
+        .and_then(|c| c.get("integerValue"))
+        .and_then(|v| v.as_str())
+        .ok_or_else(|| format!("Unexpected aggregation response shape: {text}"))?;
+
+    count_str
+        .parse::<i64>()
+        .map_err(|e| format!("Failed to parse count: {e}"))
 }
