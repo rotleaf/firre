@@ -61,10 +61,19 @@
                     <a class="class" href="#AuthResponse">AuthResponse</a>
                             <ul class="memberlist">
                         <li>
+                                <a class="variable" href="#AuthResponse.refreshToken">refreshToken</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#AuthResponse.json">json</a>
+                        </li>
+                        <li>
                                 <a class="variable" href="#AuthResponse.getAuthHeader">getAuthHeader</a>
                         </li>
                         <li>
-                                <a class="variable" href="#AuthResponse.refreshToken">refreshToken</a>
+                                <a class="variable" href="#AuthResponse.expiresIn">expiresIn</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#AuthResponse.userId">userId</a>
                         </li>
                         <li>
                                 <a class="variable" href="#AuthResponse.raw">raw</a>
@@ -73,16 +82,7 @@
                                 <a class="variable" href="#AuthResponse.email">email</a>
                         </li>
                         <li>
-                                <a class="variable" href="#AuthResponse.json">json</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#AuthResponse.expiresIn">expiresIn</a>
-                        </li>
-                        <li>
                                 <a class="variable" href="#AuthResponse.idToken">idToken</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#AuthResponse.userId">userId</a>
                         </li>
                 </ul>
 
@@ -100,19 +100,19 @@
                                 <a class="variable" href="#RefreshResponse.accessToken">accessToken</a>
                         </li>
                         <li>
-                                <a class="variable" href="#RefreshResponse.refreshToken">refreshToken</a>
-                        </li>
-                        <li>
                                 <a class="variable" href="#RefreshResponse.json">json</a>
                         </li>
                         <li>
-                                <a class="variable" href="#RefreshResponse.raw">raw</a>
+                                <a class="variable" href="#RefreshResponse.expiresIn">expiresIn</a>
                         </li>
                         <li>
                                 <a class="variable" href="#RefreshResponse.getAuthHeader">getAuthHeader</a>
                         </li>
                         <li>
-                                <a class="variable" href="#RefreshResponse.expiresIn">expiresIn</a>
+                                <a class="variable" href="#RefreshResponse.raw">raw</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#RefreshResponse.refreshToken">refreshToken</a>
                         </li>
                 </ul>
 
@@ -121,7 +121,37 @@
                     <a class="class" href="#FirestoreClient">FirestoreClient</a>
                             <ul class="memberlist">
                         <li>
+                                <a class="function" href="#FirestoreClient.collection">collection</a>
+                        </li>
+                        <li>
                                 <a class="function" href="#FirestoreClient.doc">doc</a>
+                        </li>
+                </ul>
+
+            </li>
+            <li>
+                    <a class="class" href="#Collection">Collection</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="function" href="#Collection.get">get</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#Collection.doc">doc</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#Collection.getDocumentIds">getDocumentIds</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#Collection.deleteAll">deleteAll</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#Collection.getDocuments">getDocuments</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#Collection.deleteAllConcurrent">deleteAllConcurrent</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#Collection.documentCount">documentCount</a>
                         </li>
                 </ul>
 
@@ -137,6 +167,15 @@
                         </li>
                         <li>
                                 <a class="function" href="#Document.Field">Field</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#Document.delete">delete</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#Document.collection">collection</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#Document.raw">raw</a>
                         </li>
                 </ul>
 
@@ -298,6 +337,28 @@
     
     
 
+                            <div id="AuthResponse.refreshToken" class="classattr">
+                                <div class="attr variable">
+            <span class="name">refreshToken</span>
+
+        
+    </div>
+    <a class="headerlink" href="#AuthResponse.refreshToken"></a>
+    
+    
+
+                            </div>
+                            <div id="AuthResponse.json" class="classattr">
+                                <div class="attr variable">
+            <span class="name">json</span>
+
+        
+    </div>
+    <a class="headerlink" href="#AuthResponse.json"></a>
+    
+    
+
+                            </div>
                             <div id="AuthResponse.getAuthHeader" class="classattr">
                                 <div class="attr variable">
             <span class="name">getAuthHeader</span>
@@ -309,13 +370,24 @@
     
 
                             </div>
-                            <div id="AuthResponse.refreshToken" class="classattr">
+                            <div id="AuthResponse.expiresIn" class="classattr">
                                 <div class="attr variable">
-            <span class="name">refreshToken</span>
+            <span class="name">expiresIn</span>
 
         
     </div>
-    <a class="headerlink" href="#AuthResponse.refreshToken"></a>
+    <a class="headerlink" href="#AuthResponse.expiresIn"></a>
+    
+    
+
+                            </div>
+                            <div id="AuthResponse.userId" class="classattr">
+                                <div class="attr variable">
+            <span class="name">userId</span>
+
+        
+    </div>
+    <a class="headerlink" href="#AuthResponse.userId"></a>
     
     
 
@@ -342,28 +414,6 @@
     
 
                             </div>
-                            <div id="AuthResponse.json" class="classattr">
-                                <div class="attr variable">
-            <span class="name">json</span>
-
-        
-    </div>
-    <a class="headerlink" href="#AuthResponse.json"></a>
-    
-    
-
-                            </div>
-                            <div id="AuthResponse.expiresIn" class="classattr">
-                                <div class="attr variable">
-            <span class="name">expiresIn</span>
-
-        
-    </div>
-    <a class="headerlink" href="#AuthResponse.expiresIn"></a>
-    
-    
-
-                            </div>
                             <div id="AuthResponse.idToken" class="classattr">
                                 <div class="attr variable">
             <span class="name">idToken</span>
@@ -371,17 +421,6 @@
         
     </div>
     <a class="headerlink" href="#AuthResponse.idToken"></a>
-    
-    
-
-                            </div>
-                            <div id="AuthResponse.userId" class="classattr">
-                                <div class="attr variable">
-            <span class="name">userId</span>
-
-        
-    </div>
-    <a class="headerlink" href="#AuthResponse.userId"></a>
     
     
 
@@ -432,17 +471,6 @@
     
 
                             </div>
-                            <div id="RefreshResponse.refreshToken" class="classattr">
-                                <div class="attr variable">
-            <span class="name">refreshToken</span>
-
-        
-    </div>
-    <a class="headerlink" href="#RefreshResponse.refreshToken"></a>
-    
-    
-
-                            </div>
                             <div id="RefreshResponse.json" class="classattr">
                                 <div class="attr variable">
             <span class="name">json</span>
@@ -454,13 +482,13 @@
     
 
                             </div>
-                            <div id="RefreshResponse.raw" class="classattr">
+                            <div id="RefreshResponse.expiresIn" class="classattr">
                                 <div class="attr variable">
-            <span class="name">raw</span>
+            <span class="name">expiresIn</span>
 
         
     </div>
-    <a class="headerlink" href="#RefreshResponse.raw"></a>
+    <a class="headerlink" href="#RefreshResponse.expiresIn"></a>
     
     
 
@@ -476,13 +504,24 @@
     
 
                             </div>
-                            <div id="RefreshResponse.expiresIn" class="classattr">
+                            <div id="RefreshResponse.raw" class="classattr">
                                 <div class="attr variable">
-            <span class="name">expiresIn</span>
+            <span class="name">raw</span>
 
         
     </div>
-    <a class="headerlink" href="#RefreshResponse.expiresIn"></a>
+    <a class="headerlink" href="#RefreshResponse.raw"></a>
+    
+    
+
+                            </div>
+                            <div id="RefreshResponse.refreshToken" class="classattr">
+                                <div class="attr variable">
+            <span class="name">refreshToken</span>
+
+        
+    </div>
+    <a class="headerlink" href="#RefreshResponse.refreshToken"></a>
     
     
 
@@ -500,6 +539,21 @@
     
     
 
+                            <div id="FirestoreClient.collection" class="classattr">
+                                <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">collection</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="o">/</span>, </span><span class="param"><span class="n">path</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#FirestoreClient.collection"></a>
+    
+            <div class="docstring"><p>The type of the None singleton.</p>
+</div>
+
+
+                            </div>
                             <div id="FirestoreClient.doc" class="classattr">
                                 <div class="attr function">
             
@@ -509,6 +563,124 @@
         
     </div>
     <a class="headerlink" href="#FirestoreClient.doc"></a>
+    
+            <div class="docstring"><p>The type of the None singleton.</p>
+</div>
+
+
+                            </div>
+                </section>
+                <section id="Collection">
+                    <div class="attr class">
+            
+    <span class="def">class</span>
+    <span class="name">Collection</span>:
+
+        
+    </div>
+    <a class="headerlink" href="#Collection"></a>
+    
+    
+
+                            <div id="Collection.get" class="classattr">
+                                <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">get</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="o">/</span>, </span><span class="param"><span class="n">page_size</span><span class="o">=</span><span class="mi">300</span>, </span><span class="param"><span class="n">headers</span><span class="o">=</span><span class="kc">None</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#Collection.get"></a>
+    
+            <div class="docstring"><p>fetch all documents in this collection as a JSON array string</p>
+</div>
+
+
+                            </div>
+                            <div id="Collection.doc" class="classattr">
+                                <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">doc</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="o">/</span>, </span><span class="param"><span class="n">doc_id</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#Collection.doc"></a>
+    
+            <div class="docstring"><p>The type of the None singleton.</p>
+</div>
+
+
+                            </div>
+                            <div id="Collection.getDocumentIds" class="classattr">
+                                <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">getDocumentIds</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="o">/</span>, </span><span class="param"><span class="n">headers</span><span class="o">=</span><span class="kc">None</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#Collection.getDocumentIds"></a>
+    
+            <div class="docstring"><p>The type of the None singleton.</p>
+</div>
+
+
+                            </div>
+                            <div id="Collection.deleteAll" class="classattr">
+                                <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">deleteAll</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="o">/</span>, </span><span class="param"><span class="n">headers</span><span class="o">=</span><span class="kc">None</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#Collection.deleteAll"></a>
+    
+            <div class="docstring"><p>delete every document in this collection. Returns count deleted.</p>
+</div>
+
+
+                            </div>
+                            <div id="Collection.getDocuments" class="classattr">
+                                <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">getDocuments</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="o">/</span>, </span><span class="param"><span class="n">headers</span><span class="o">=</span><span class="kc">None</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#Collection.getDocuments"></a>
+    
+            <div class="docstring"><p>The type of the None singleton.</p>
+</div>
+
+
+                            </div>
+                            <div id="Collection.deleteAllConcurrent" class="classattr">
+                                <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">deleteAllConcurrent</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="o">/</span>, </span><span class="param"><span class="n">concurrency</span><span class="o">=</span><span class="mi">20</span>, </span><span class="param"><span class="n">headers</span><span class="o">=</span><span class="kc">None</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#Collection.deleteAllConcurrent"></a>
+    
+            <div class="docstring"><p>The type of the None singleton.</p>
+</div>
+
+
+                            </div>
+                            <div id="Collection.documentCount" class="classattr">
+                                <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">documentCount</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="o">/</span>, </span><span class="param"><span class="n">headers</span><span class="o">=</span><span class="kc">None</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#Collection.documentCount"></a>
     
             <div class="docstring"><p>The type of the None singleton.</p>
 </div>
@@ -571,6 +743,47 @@
             <div class="docstring"><p>The type of the None singleton.</p>
 </div>
 
+
+                            </div>
+                            <div id="Document.delete" class="classattr">
+                                <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">delete</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="o">/</span>, </span><span class="param"><span class="n">headers</span><span class="o">=</span><span class="kc">None</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#Document.delete"></a>
+    
+            <div class="docstring"><p>The type of the None singleton.</p>
+</div>
+
+
+                            </div>
+                            <div id="Document.collection" class="classattr">
+                                <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">collection</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="o">/</span>, </span><span class="param"><span class="n">collection_id</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#Document.collection"></a>
+    
+            <div class="docstring"><p>The type of the None singleton.</p>
+</div>
+
+
+                            </div>
+                            <div id="Document.raw" class="classattr">
+                                <div class="attr variable">
+            <span class="name">raw</span>
+
+        
+    </div>
+    <a class="headerlink" href="#Document.raw"></a>
+    
+    
 
                             </div>
                 </section>
