@@ -61,16 +61,10 @@
                     <a class="class" href="#AuthResponse">AuthResponse</a>
                             <ul class="memberlist">
                         <li>
-                                <a class="variable" href="#AuthResponse.refreshToken">refreshToken</a>
+                                <a class="variable" href="#AuthResponse.email">email</a>
                         </li>
                         <li>
                                 <a class="variable" href="#AuthResponse.json">json</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#AuthResponse.getAuthHeader">getAuthHeader</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#AuthResponse.expiresIn">expiresIn</a>
                         </li>
                         <li>
                                 <a class="variable" href="#AuthResponse.userId">userId</a>
@@ -79,10 +73,16 @@
                                 <a class="variable" href="#AuthResponse.raw">raw</a>
                         </li>
                         <li>
-                                <a class="variable" href="#AuthResponse.email">email</a>
+                                <a class="variable" href="#AuthResponse.getAuthHeader">getAuthHeader</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#AuthResponse.refreshToken">refreshToken</a>
                         </li>
                         <li>
                                 <a class="variable" href="#AuthResponse.idToken">idToken</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#AuthResponse.expiresIn">expiresIn</a>
                         </li>
                 </ul>
 
@@ -91,10 +91,10 @@
                     <a class="class" href="#RefreshResponse">RefreshResponse</a>
                             <ul class="memberlist">
                         <li>
-                                <a class="variable" href="#RefreshResponse.idToken">idToken</a>
+                                <a class="variable" href="#RefreshResponse.getAuthHeader">getAuthHeader</a>
                         </li>
                         <li>
-                                <a class="variable" href="#RefreshResponse.userId">userId</a>
+                                <a class="variable" href="#RefreshResponse.refreshToken">refreshToken</a>
                         </li>
                         <li>
                                 <a class="variable" href="#RefreshResponse.accessToken">accessToken</a>
@@ -103,16 +103,16 @@
                                 <a class="variable" href="#RefreshResponse.json">json</a>
                         </li>
                         <li>
-                                <a class="variable" href="#RefreshResponse.expiresIn">expiresIn</a>
+                                <a class="variable" href="#RefreshResponse.userId">userId</a>
                         </li>
                         <li>
-                                <a class="variable" href="#RefreshResponse.getAuthHeader">getAuthHeader</a>
+                                <a class="variable" href="#RefreshResponse.expiresIn">expiresIn</a>
                         </li>
                         <li>
                                 <a class="variable" href="#RefreshResponse.raw">raw</a>
                         </li>
                         <li>
-                                <a class="variable" href="#RefreshResponse.refreshToken">refreshToken</a>
+                                <a class="variable" href="#RefreshResponse.idToken">idToken</a>
                         </li>
                 </ul>
 
@@ -337,13 +337,13 @@
     
     
 
-                            <div id="AuthResponse.refreshToken" class="classattr">
+                            <div id="AuthResponse.email" class="classattr">
                                 <div class="attr variable">
-            <span class="name">refreshToken</span>
+            <span class="name">email</span>
 
         
     </div>
-    <a class="headerlink" href="#AuthResponse.refreshToken"></a>
+    <a class="headerlink" href="#AuthResponse.email"></a>
     
     
 
@@ -355,28 +355,6 @@
         
     </div>
     <a class="headerlink" href="#AuthResponse.json"></a>
-    
-    
-
-                            </div>
-                            <div id="AuthResponse.getAuthHeader" class="classattr">
-                                <div class="attr variable">
-            <span class="name">getAuthHeader</span>
-
-        
-    </div>
-    <a class="headerlink" href="#AuthResponse.getAuthHeader"></a>
-    
-    
-
-                            </div>
-                            <div id="AuthResponse.expiresIn" class="classattr">
-                                <div class="attr variable">
-            <span class="name">expiresIn</span>
-
-        
-    </div>
-    <a class="headerlink" href="#AuthResponse.expiresIn"></a>
     
     
 
@@ -403,13 +381,24 @@
     
 
                             </div>
-                            <div id="AuthResponse.email" class="classattr">
+                            <div id="AuthResponse.getAuthHeader" class="classattr">
                                 <div class="attr variable">
-            <span class="name">email</span>
+            <span class="name">getAuthHeader</span>
 
         
     </div>
-    <a class="headerlink" href="#AuthResponse.email"></a>
+    <a class="headerlink" href="#AuthResponse.getAuthHeader"></a>
+    
+    
+
+                            </div>
+                            <div id="AuthResponse.refreshToken" class="classattr">
+                                <div class="attr variable">
+            <span class="name">refreshToken</span>
+
+        
+    </div>
+    <a class="headerlink" href="#AuthResponse.refreshToken"></a>
     
     
 
@@ -421,6 +410,17 @@
         
     </div>
     <a class="headerlink" href="#AuthResponse.idToken"></a>
+    
+    
+
+                            </div>
+                            <div id="AuthResponse.expiresIn" class="classattr">
+                                <div class="attr variable">
+            <span class="name">expiresIn</span>
+
+        
+    </div>
+    <a class="headerlink" href="#AuthResponse.expiresIn"></a>
     
     
 
@@ -438,24 +438,24 @@
     
     
 
-                            <div id="RefreshResponse.idToken" class="classattr">
+                            <div id="RefreshResponse.getAuthHeader" class="classattr">
                                 <div class="attr variable">
-            <span class="name">idToken</span>
+            <span class="name">getAuthHeader</span>
 
         
     </div>
-    <a class="headerlink" href="#RefreshResponse.idToken"></a>
+    <a class="headerlink" href="#RefreshResponse.getAuthHeader"></a>
     
     
 
                             </div>
-                            <div id="RefreshResponse.userId" class="classattr">
+                            <div id="RefreshResponse.refreshToken" class="classattr">
                                 <div class="attr variable">
-            <span class="name">userId</span>
+            <span class="name">refreshToken</span>
 
         
     </div>
-    <a class="headerlink" href="#RefreshResponse.userId"></a>
+    <a class="headerlink" href="#RefreshResponse.refreshToken"></a>
     
     
 
@@ -482,6 +482,17 @@
     
 
                             </div>
+                            <div id="RefreshResponse.userId" class="classattr">
+                                <div class="attr variable">
+            <span class="name">userId</span>
+
+        
+    </div>
+    <a class="headerlink" href="#RefreshResponse.userId"></a>
+    
+    
+
+                            </div>
                             <div id="RefreshResponse.expiresIn" class="classattr">
                                 <div class="attr variable">
             <span class="name">expiresIn</span>
@@ -489,17 +500,6 @@
         
     </div>
     <a class="headerlink" href="#RefreshResponse.expiresIn"></a>
-    
-    
-
-                            </div>
-                            <div id="RefreshResponse.getAuthHeader" class="classattr">
-                                <div class="attr variable">
-            <span class="name">getAuthHeader</span>
-
-        
-    </div>
-    <a class="headerlink" href="#RefreshResponse.getAuthHeader"></a>
     
     
 
@@ -515,13 +515,13 @@
     
 
                             </div>
-                            <div id="RefreshResponse.refreshToken" class="classattr">
+                            <div id="RefreshResponse.idToken" class="classattr">
                                 <div class="attr variable">
-            <span class="name">refreshToken</span>
+            <span class="name">idToken</span>
 
         
     </div>
-    <a class="headerlink" href="#RefreshResponse.refreshToken"></a>
+    <a class="headerlink" href="#RefreshResponse.idToken"></a>
     
     
 
