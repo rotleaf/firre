@@ -232,6 +232,10 @@ jobs:
     permissions:
       contents: write
     steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - uses: actions/download-artifact@v4
         with:
           path: release-dist
@@ -240,11 +244,20 @@ jobs:
       - name: Show files
         run: ls -lah release-dist
 
+      - name: Generate changelog for this tag
+        uses: orhun/git-cliff-action@v4
+        id: changelog
+        with:
+          config: cliff.toml
+          args: --latest --strip header
+        env:
+          OUTPUT: CHANGES.md
+
       - name: Upload assets to GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           files: release-dist/*
-          generate_release_notes: true
+          body_path: CHANGES.md
 
   release-pypi:
     name: Publish PyPI dists only
