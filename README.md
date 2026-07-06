@@ -58,31 +58,32 @@ auth = frb.auth.refreshTokenAuth(os.environ["FIREBASE_REFRESH_TOKEN"])
 store = frb.Firestore(auth.accessToken, "your-project-id")   # -> FirestoreClient
 ```
 
-### Path rules
-
-Paths are passed straight through to the Firestore REST URL after a leading
-slash is stripped — **no trailing slash**, and `firre` does not validate
-collection-vs-document shape for you:
-
-- even number of segments (`users/<uid>`) → a single document
-- odd number of segments (`users`) → a collection; `GET` on it lists documents
-  in that collection rather than erroring
+### References: `doc()` and `collection()`
 
 ```python
 doc = store.doc("users/abc123")     # Document reference, no request sent yet
-col = store.doc("users")            # also valid — collection reference
+col = store.collection("users")     # Collection reference, no request sent yet
 ```
 
-`store.doc(...)` only builds the reference object. Nothing is fetched until
-you call `.get()`.
+Both only build the reference object — nothing is fetched until you call a
+method on it. A `Collection` can also chain into a `Document`:
 
-### Reading
+```python
+doc = store.collection("users").doc("abc123")   # same reference as store.doc("users/abc123")
+```
+
+### Documents
 
 ```python
 resp = doc.get()            # -> FirestoreResponse
 print(resp.json)            # parsed dict
 print(resp.raw)             # raw response text
+
+doc.delete()                # deletes this document; returns FirestoreResponse (raw == "{}" on success)
 ```
+
+Failed calls (any non-2xx) raise `RuntimeError` rather than returning an error
+object — see **Error handling** below.
 
 ### Writing a field
 
@@ -98,7 +99,7 @@ nesting (`profile.displayName`) and builds the corresponding Firestore
 `mapValue` structure automatically.
 
 ```python
-doc.patch("stringValue", "displayName", "kelvin")
+doc.patch("stringValue", "displayName", "name")
 doc.patch("integerValue", "loginCount", "1")
 doc.patch("booleanValue", "active", "true")
 ```
@@ -111,6 +112,34 @@ field.serverTimestamp()       # set field to server request time
 field.increment(1.0)          # atomic numeric increment
 field.delete()                # remove the field from the document
 ```
+
+### Collections
+
+```python
+col = store.collection("users")
+
+ids = col.getDocumentIds()         # -> list[str], paginated internally, bare doc IDs only
+docs = col.getDocuments()          # -> list[Document], paginated internally, full field data
+
+for doc in docs:
+    data = doc.json               # parsed dict for this document
+    if some_condition(data):
+        doc.delete()              # each entry is a full Document reference — get/patch/delete all work
+
+count = col.deleteAll()            # deletes every document in the collection, batched (500/req)
+print(f"deleted {count} documents")
+```
+
+Notes:
+- `getDocumentIds()` uses a `__name__`-only field mask, so it's cheap even on
+  large collections — use it when you just need IDs to loop against.
+- `getDocuments()` fetches full documents and returns real `Document` objects
+  (not plain JSON), so each one is independently actionable — `.get()`,
+  `.patch()`, `.delete()` all work directly on entries from the list.
+- `deleteAll()` lists then batch-deletes (up to 500 per request) and pages
+  through the full collection automatically, returning the total count deleted.
+- None of these cascade into subcollections — nested subcollections need their
+  own `collection(path).deleteAll()` call.
 
 ## Response objects
 
@@ -136,16 +165,24 @@ import firre
 frb = firre.Firebase(os.environ["FIREBASE_API_KEY"])
 auth = frb.auth.refreshTokenAuth(os.environ["FIREBASE_REFRESH_TOKEN"])
 
-store = frb.Firestore(auth.accessToken, "crypto-sense-1615918317807")
+store = frb.Firestore(auth.accessToken, "your-project-id")
 
 # single doc
 user = store.doc("users/abc123").get()
 print(user.json)
 
 # list a collection
-users = store.doc("users").get()
-print(users.json)
+users = store.collection("users").getDocuments()
+for u in users:
+    print(u.json)
 
 # write
 store.doc("users/abc123").patch("integerValue", "loginCount", "42")
+
+# delete a document
+store.doc("users/abc123").delete()
+
+# delete an entire collection
+deleted = store.collection("users").deleteAll()
+print(f"deleted {deleted} documents")
 ```

@@ -1,0 +1,2 @@
+max_retries = 20
+retry_after = 20
